@@ -1,0 +1,7 @@
+/vendor/
+/writable/
+public/uploads/profiles/*
+!public/uploads/profiles/.gitkeep
+public/uploads/tasks/*
+!public/uploads/tasks/.gitkeep
+.env
