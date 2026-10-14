@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Organizador de Tareas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= lang('App.home') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -13,60 +14,38 @@
                 <a href="/lang/en" class="btn btn-outline-light btn-sm">English</a>
                 <a href="/lang/es" class="btn btn-outline-light btn-sm">Español</a>
                 
-                <?php if (session()->get('logged_in')): ?>
-                    <a href="/tasks" class="btn btn-primary btn-sm ms-2"><?= lang('App.tasks') ?></a>
-                    <div class="dropdown ms-3">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                            <?php 
-                                $userModel = new \App\Models\UserModel();
-                                $currentUser = $userModel->find(session()->get('user_id'));
-                                if (!empty($currentUser['profile_image']) && file_exists('uploads/profiles/' . $currentUser['profile_image'])): 
-                            ?>
-                                <img src="/uploads/profiles/<?= $currentUser['profile_image'] ?>" alt="Profile" class="rounded-circle me-2" style="width: 36px; height: 36px; object-fit: cover;">
-                            <?php else: ?>
-                                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
-                                    <svg width="20" height="20" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
-                                </div>
-                            <?php endif; ?>
-                            <span><?= lang('App.hello') ?>, <strong><?= session()->get('user_name') ?></strong></span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="/profile"><?= lang('App.profile') ?></a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/logout"><?= lang('App.logout') ?></a></li>
-                        </ul>
-                    </div>
+                <?php if(session()->get('logged_in')): ?>
+                    <a href="/tasks" class="btn btn-primary btn-sm me-2"><?= lang('App.tasks') ?></a>
+                    <?php if (session()->get('is_admin')): ?>
+                        <a href="/users" class="btn btn-outline-info btn-sm me-2"><?= lang('App.users') ?></a>
+                    <?php endif; ?>
+                    <a href="/profile" class="btn btn-outline-light btn-sm me-2"><?= lang('App.profile') ?></a>
+                    <a href="/logout" class="btn btn-outline-danger btn-sm"><?= lang('App.logout') ?></a>
                 <?php else: ?>
-                    <a href="/signup" class="btn btn-outline-light btn-sm ms-2"><?= lang('App.signup') ?></a>
-                    <a href="/login" class="btn btn-success btn-sm ms-1"><?= lang('App.login') ?></a>
+                    <a href="/login" class="btn btn-outline-light btn-sm ms-2"><?= lang('App.login') ?></a>
+                    <a href="/signup" class="btn btn-primary btn-sm fw-bold"><?= lang('App.signup') ?></a>
                 <?php endif; ?>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <?php if(session()->getFlashdata('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show text-center auto-dismiss-alert shadow-sm" role="alert">
-                <?= session()->getFlashdata('success') ?>
+    <div class="container my-5 text-center" style="max-width: 750px;">
+        <div class="card p-5 shadow-sm border-0 rounded-4">
+            <div class="mb-3 fs-1">📝</div>
+            <h1 class="fw-bold text-dark mb-3"><?= lang('App.welcome') ?></h1>
+            <p class="text-secondary fs-5 mb-4"><?= lang('App.subtitle') ?></p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <?php if(session()->get('logged_in')): ?>
+                    <a href="/tasks" class="btn btn-primary btn-lg px-4 fw-bold shadow-sm">Ver Mis Tareas</a>
+                <?php else: ?>
+                    <a href="/login" class="btn btn-primary btn-lg px-4 fw-bold shadow-sm"><?= lang('App.login') ?></a>
+                    <a href="/signup" class="btn btn-outline-secondary btn-lg px-4 fw-bold"><?= lang('App.signup') ?></a>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
-
-        <div class="card p-5 text-center shadow-sm border-0 rounded-4">
-            <h1 class="display-4 fw-bold text-primary mb-3"><?= lang('App.welcome') ?></h1>
-            <p class="lead text-muted mb-0"><?= lang('App.subtitle') ?></p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        setTimeout(function() {
-            let alerts = document.querySelectorAll('.auto-dismiss-alert');
-            alerts.forEach(function(alert) {
-                alert.style.transition = "opacity 0.5s ease";
-                alert.style.opacity = 0;
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 3000);
-    </script>
 </body>
 </html>

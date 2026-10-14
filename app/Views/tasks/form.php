@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($task) ? 'Edit Task' : lang('App.new_task') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -47,18 +48,18 @@
         </div>
     </nav>
 
-    <div class="container" style="max-width: 650px;">
-        <div class="card p-4 shadow-sm border-0 rounded-4">
+    <div class="container my-4" style="max-width: 650px;">
+        <div class="card p-4 p-md-5 shadow-sm border-0 rounded-4">
             <h3 class="fw-bold mb-4 text-dark"><?= isset($task) ? 'Edit Task' : lang('App.new_task') ?></h3>
 
             <form action="<?= isset($task) ? '/tasks/update/' . $task['id'] : '/tasks/create' ?>" method="post">
                 <div class="mb-4">
-                    <label class="form-label fw-bold fs-5">Description</label>
+                    <label class="form-label fw-semibold text-secondary">Description</label>
                     <input type="text" name="class_name" class="form-control form-control-lg border-2" value="<?= esc($task['class_name'] ?? '') ?>" required placeholder="Ingresa la descripción de la tarea">
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success px-4 fw-bold"><?= isset($task) ? 'Save' : lang('App.send') ?></button>
+                    <button type="submit" class="btn btn-success px-4 fw-bold shadow-sm"><?= isset($task) ? 'Save' : lang('App.send') ?></button>
                     <a href="/tasks" class="btn btn-outline-danger px-4"><?= lang('App.cancel') ?></a>
                 </div>
             </form>
