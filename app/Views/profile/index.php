@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title><?= lang('App.profile') ?></title>
+    <title><?= lang('App.profile_title') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -14,6 +14,11 @@
                 <a href="/lang/es" class="btn btn-outline-light btn-sm">Español</a>
                 
                 <a href="/tasks" class="btn btn-primary btn-sm me-2"><?= lang('App.tasks') ?></a>
+                
+                <?php if (session()->get('is_admin')): ?>
+                    <a href="/users" class="btn btn-outline-info btn-sm me-2"><?= lang('App.users') ?></a>
+                <?php endif; ?>
+
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if (!empty($user['profile_image']) && file_exists('uploads/profiles/' . $user['profile_image'])): ?>
@@ -23,10 +28,13 @@
                                 <svg width="20" height="20" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
                             </div>
                         <?php endif; ?>
-                        <span><?= lang('App.hello') ?>, <strong><?= session()->get('user_name') ?></strong></span>
+                        <span><?= lang('App.hello') ?>, <strong><?= esc($user['name']) ?></strong></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
                         <li><a class="dropdown-item" href="/profile"><?= lang('App.profile') ?></a></li>
+                        <?php if (session()->get('is_admin')): ?>
+                            <li><a class="dropdown-item fw-bold text-primary" href="/users"><?= lang('App.users') ?></a></li>
+                        <?php endif; ?>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout"><?= lang('App.logout') ?></a></li>
                     </ul>
@@ -44,47 +52,42 @@
         <?php endif; ?>
 
         <div class="card p-4 shadow-sm border-0 rounded-4">
-            <h2 class="mb-4 fw-bold"><?= lang('App.profile_title') ?></h2>
-            
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <?php if (!empty($user['profile_image']) && file_exists('uploads/profiles/' . $user['profile_image'])): ?>
-                        <img src="/uploads/profiles/<?= $user['profile_image'] ?>" alt="Profile" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-                    <?php else: ?>
-                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
-                            <svg width="80" height="80" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                            </svg>
-                        </div>
-                    <?php endif; ?>
+            <div class="d-flex align-items-center gap-4 border-bottom pb-4 mb-4">
+                <?php if (!empty($user['profile_image']) && file_exists('uploads/profiles/' . $user['profile_image'])): ?>
+                    <img src="/uploads/profiles/<?= $user['profile_image'] ?>" alt="Profile Image" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
+                <?php else: ?>
+                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 120px; height: 120px;">
+                        <svg width="60" height="60" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                    </div>
+                <?php endif; ?>
 
+                <div>
+                    <h3 class="fw-bold mb-1"><?= esc($user['name']) ?></h3>
+                    <p class="text-muted mb-2"><?= esc($user['email']) ?></p>
                     <div>
-                        <a href="/profile/delete-image" class="btn btn-outline-danger btn-sm mb-3"><?= lang('App.delete_image') ?></a>
+                        <?php if($user['is_admin']): ?>
+                            <span class="badge bg-warning text-dark me-2">Administrador</span>
+                        <?php endif; ?>
+                        <span class="badge bg-success">Cuenta Activa</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-md-8">
-                    <h3 class="text-uppercase fw-bold text-dark mb-4"><?= esc($user['name']) ?></h3>
+            <div class="mb-4">
+                <h5 class="fw-bold text-dark mb-2"><?= lang('App.bio') ?></h5>
+                <p class="text-secondary bg-light p-3 rounded-3 border mb-0">
+                    <?= !empty($user['bio']) ? nl2br(esc($user['bio'])) : '<em>' . lang('App.no_bio') . '</em>' ?>
+                </p>
+            </div>
 
-                    <div class="mb-3">
-                        <h5 class="fw-bold mb-1"><?= lang('App.contact') ?></h5>
-                        <p class="text-muted mb-0"><?= esc($user['email']) ?></p>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5 class="fw-bold mb-1"><?= lang('App.bio') ?></h5>
-                        <p class="text-muted mb-0">
-                            <?= !empty($user['bio']) ? nl2br(esc($user['bio'])) : lang('App.no_bio') ?>
-                        </p>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="/profile/confirm-password" class="btn btn-primary"><?= lang('App.edit') ?></a>
-                        <a href="/profile/change-password" class="btn btn-primary"><?= lang('App.change_password') ?></a>
-                        <a href="/profile/change-image" class="btn btn-primary"><?= lang('App.change_image') ?></a>
-                        <a href="/profile/delete-account" class="btn btn-outline-danger"><?= lang('App.delete_account') ?></a>
-                    </div>
-                </div>
+            <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                <a href="/profile/edit" class="btn btn-outline-primary"><?= lang('App.edit_profile') ?></a>
+                <a href="/profile/change-password" class="btn btn-outline-secondary"><?= lang('App.change_password') ?></a>
+                <a href="/profile/change-image" class="btn btn-outline-info"><?= lang('App.change_image') ?></a>
+                <?php if (!empty($user['profile_image'])): ?>
+                    <a href="/profile/delete-image" class="btn btn-outline-warning" onclick="return confirm('<?= lang('App.are_you_sure') ?>');"><?= lang('App.delete_image') ?></a>
+                <?php endif; ?>
+                <a href="/profile/delete-account" class="btn btn-outline-danger ms-auto" onclick="return confirm('<?= lang('App.confirm_delete_account') ?>');"><?= lang('App.delete_account') ?></a>
             </div>
         </div>
     </div>

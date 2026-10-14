@@ -25,17 +25,15 @@ $routes->match(['get', 'post'], 'profile/delete-image', 'Profile::deleteImage');
 $routes->match(['get', 'post'], 'profile/delete-account', 'Profile::deleteAccount');
 
 $routes->get('users', 'Users::index');
+$routes->get('users/show/(:num)', 'Users::showUser/$1');
 $routes->match(['get', 'post'], 'users/create', 'Users::createUser');
 $routes->get('users/edit/(:num)', 'Users::editUser/$1');
 $routes->post('users/update/(:num)', 'Users::updateUser/$1');
+$routes->get('users/delete/(:num)', 'Users::delete/$1');
 
 $routes->get('tasks', 'Home::tasks');
-$routes->get('tasks/show/(:num)', 'Home::showTask/$1');
-$routes->post('tasks/upload-images/(:num)', 'Home::uploadTaskImages/$1');
-$routes->get('tasks/delete-image/(:num)/(:num)', 'Home::deleteTaskImage/$1/$2');
 $routes->get('tasks/create', 'Home::newTask');
 $routes->post('tasks/create', 'Home::createTask');
 $routes->get('tasks/edit/(:num)', 'Home::editTask/$1');
 $routes->post('tasks/update/(:num)', 'Home::updateTask/$1');
-$routes->get('tasks/toggle-hide/(:num)', 'Home::toggleHideTask/$1');
 $routes->get('tasks/delete/(:num)', 'Home::deleteTask/$1');

@@ -14,6 +14,11 @@
                 <a href="/lang/es" class="btn btn-outline-light btn-sm">Español</a>
                 
                 <a href="/tasks" class="btn btn-primary btn-sm me-2"><?= lang('App.tasks') ?></a>
+                
+                <?php if (session()->get('is_admin')): ?>
+                    <a href="/users" class="btn btn-outline-info btn-sm me-2"><?= lang('App.users') ?></a>
+                <?php endif; ?>
+
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php 
@@ -31,6 +36,9 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
                         <li><a class="dropdown-item" href="/profile"><?= lang('App.profile') ?></a></li>
+                        <?php if (session()->get('is_admin')): ?>
+                            <li><a class="dropdown-item fw-bold text-primary" href="/users"><?= lang('App.users') ?></a></li>
+                        <?php endif; ?>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout"><?= lang('App.logout') ?></a></li>
                     </ul>
@@ -39,66 +47,64 @@
         </div>
     </nav>
 
-    <div class="container" style="max-width: 900px;">
+    <div class="container" style="max-width: 850px;">
         <?php if(session()->getFlashdata('success')): ?>
             <div class="alert alert-success py-2 auto-dismiss-alert"><?= session()->getFlashdata('success') ?></div>
         <?php endif; ?>
+        <?php if(session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger py-2 auto-dismiss-alert"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold"><?= lang('App.tasks') ?></h2>
-            <div>
-                <a href="/tasks/create" class="btn btn-success me-2">+ <?= lang('App.new_task') ?></a>
-                <a href="/tasks?show_hidden=<?= $show_hidden ? '0' : '1' ?>" class="btn btn-outline-secondary">
-                    <?= $show_hidden ? lang('App.active_tasks') : lang('App.hidden_tasks') ?>
-                </a>
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <h2 class="fw-bold text-dark mb-3"><?= lang('App.tasks') ?></h2>
+
+            <div class="mb-3">
+                <a href="/tasks/create" class="btn btn-primary fw-bold shadow-sm">+ <?= lang('App.new_task') ?></a>
             </div>
-        </div>
 
-        <form action="/tasks" method="get" class="mb-4">
-            <input type="hidden" name="show_hidden" value="<?= $show_hidden ?>">
-            <div class="input-group shadow-sm">
-                <input type="text" name="search" class="form-control" placeholder="<?= lang('App.search') ?>" value="<?= esc($search) ?>">
-                <button type="submit" class="btn btn-primary"><?= lang('App.search') ?></button>
-            </div>
-        </form>
+            <form action="/tasks" method="get" class="mb-4" style="max-width: 320px;">
+                <label class="form-label fw-bold text-secondary mb-1"><?= lang('App.search') ?></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">🔍</span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="<?= lang('App.search') ?>" value="<?= esc($search ?? '') ?>">
+                </div>
+            </form>
 
-        <div class="row">
-            <?php foreach($tasks as $task): ?>
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm h-100 border-0">
-                        <div class="card-body d-flex flex-column p-4">
-                            <h5 class="card-title mb-2">
-                                <a href="/tasks/show/<?= $task['id'] ?>" class="text-decoration-none text-primary fw-bold">
-                                    📋 <?= esc($task['class_name'] ?? 'Clase sin nombre') ?>
-                                </a>
-                            </h5>
-                            <p class="card-text text-muted small mb-3">
-                                <strong><?= lang('App.assigned_date') ?>:</strong> <?= esc($task['assigned_date']) ?><br>
-                                <strong><?= lang('App.due_date') ?>:</strong> <?= esc($task['due_date']) ?>
-                            </p>
-                            <p class="card-text flex-grow-1 text-truncate text-secondary"><?= esc($task['notes']) ?></p>
-                            
-                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                                <a href="/tasks/show/<?= $task['id'] ?>" class="btn btn-sm btn-info text-white fw-bold">Abrir Pizarrón &raquo;</a>
-                                <div class="d-flex gap-1">
-                                    <a href="/tasks/edit/<?= $task['id'] ?>" class="btn btn-sm btn-outline-primary"><?= lang('App.edit') ?></a>
-                                    <a href="/tasks/toggle-hide/<?= $task['id'] ?>" class="btn btn-sm btn-outline-warning">
-                                        <?= $task['is_hidden'] ? lang('App.show') : lang('App.hide') ?>
-                                    </a>
-                                </div>
+            <div class="list-group list-group-flush border-top border-bottom mb-4">
+                <?php if(empty($tasks)): ?>
+                    <div class="text-muted py-3"><?= lang('App.no_tasks') ?></div>
+                <?php else: ?>
+                    <?php foreach($tasks as $t): ?>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3 bg-transparent">
+                            <a href="/tasks/edit/<?= $t['id'] ?>" class="fw-bold fs-5 text-primary text-decoration-none">
+                                <?= esc($t['class_name']) ?>
+                            </a>
+                            <div>
+                                <a href="/tasks/delete/<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta tarea?');"><?= lang('App.delete') ?></a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
 
-            <?php if(empty($tasks)): ?>
-                <div class="col-12">
-                    <div class="card p-5 text-center text-muted shadow-sm border-0">
-                        <?= lang('App.no_tasks') ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+            <div class="d-flex justify-content-start gap-2 pt-2">
+                <?php 
+                    $prevUrl = (isset($pager) && method_exists($pager, 'getPrevious')) ? $pager->getPrevious() : null;
+                    $nextUrl = (isset($pager) && method_exists($pager, 'getNext')) ? $pager->getNext() : null;
+                ?>
+
+                <?php if ($prevUrl): ?>
+                    <a href="<?= $prevUrl ?>" class="btn btn-outline-primary btn-sm px-3 fw-bold"><?= lang('App.newer') ?></a>
+                <?php else: ?>
+                    <button class="btn btn-outline-secondary btn-sm px-3 disabled"><?= lang('App.newer') ?></button>
+                <?php endif; ?>
+
+                <?php if ($nextUrl): ?>
+                    <a href="<?= $nextUrl ?>" class="btn btn-outline-primary btn-sm px-3 fw-bold"><?= lang('App.older') ?></a>
+                <?php else: ?>
+                    <button class="btn btn-outline-secondary btn-sm px-3 disabled"><?= lang('App.older') ?></button>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
