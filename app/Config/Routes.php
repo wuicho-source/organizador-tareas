@@ -24,6 +24,11 @@ $routes->match(['get', 'post'], 'profile/change-image', 'Profile::changeImage');
 $routes->match(['get', 'post'], 'profile/delete-image', 'Profile::deleteImage');
 $routes->match(['get', 'post'], 'profile/delete-account', 'Profile::deleteAccount');
 
+$routes->get('users', 'Users::index');
+$routes->match(['get', 'post'], 'users/create', 'Users::createUser');
+$routes->get('users/edit/(:num)', 'Users::editUser/$1');
+$routes->post('users/update/(:num)', 'Users::updateUser/$1');
+
 $routes->get('tasks', 'Home::tasks');
 $routes->get('tasks/show/(:num)', 'Home::showTask/$1');
 $routes->post('tasks/upload-images/(:num)', 'Home::uploadTaskImages/$1');
