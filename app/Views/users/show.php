@@ -64,9 +64,9 @@
                 <h3 class="fw-bold text-dark mb-0">👤 <?= lang('App.user') ?>: <?= esc($user['name']) ?></h3>
                 <div>
                     <?php if($user['is_admin']): ?>
-                        <span class="badge bg-warning-subtle text-dark border border-warning-subtle rounded-pill px-3">Administrador</span>
+                        <span class="badge bg-warning-subtle text-dark border border-warning-subtle rounded-pill px-3"><?= lang('App.administrator') ?></span>
                     <?php else: ?>
-                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3">Usuario</span>
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3"><?= lang('App.user') ?></span>
                     <?php endif; ?>
                 </div>
             </div>
@@ -113,7 +113,7 @@
             <div class="d-flex gap-2 pt-3 border-top">
                 <a href="/users/edit/<?= $user['id'] ?>" class="btn btn-primary px-4 fw-bold"><?= lang('App.edit') ?></a>
                 <?php if($user['id'] != session()->get('user_id')): ?>
-                    <a href="/users/delete/<?= $user['id'] ?>" class="btn btn-outline-danger px-4" onclick="return confirm('¿Está seguro de eliminar este usuario?');"><?= lang('App.delete') ?></a>
+                    <a href="/users/delete/<?= $user['id'] ?>" class="btn btn-outline-danger px-4" onclick="return confirm('<?= lang('App.are_you_sure') ?>');"><?= lang('App.delete') ?></a>
                 <?php endif; ?>
             </div>
         </div>

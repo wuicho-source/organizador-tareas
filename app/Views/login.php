@@ -19,7 +19,7 @@
         </div>
     </nav>
 
-    <div class="container my-5" style="max-width: 480px;">
+    <div class="container my-5" style="max-width: 450px;">
         <?php if(session()->getFlashdata('success')): ?>
             <div class="alert alert-success py-2 auto-dismiss-alert"><?= session()->getFlashdata('success') ?></div>
         <?php endif; ?>
@@ -32,13 +32,21 @@
 
             <form action="/login" method="post">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold text-secondary"><?= lang('App.email') ?></label>
-                    <input type="email" name="email" class="form-control form-control-lg fs-6" required placeholder="correo@ejemplo.com">
+                    <label class="form-label fw-semibold text-secondary small"><?= lang('App.email') ?></label>
+                    <input type="email" name="email" class="form-control form-control-lg fs-6" value="<?= esc($remembered_email ?? '') ?>" required placeholder="correo@ejemplo.com">
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-semibold text-secondary"><?= lang('App.password') ?></label>
-                    <input type="password" name="password" class="form-control form-control-lg fs-6" required placeholder="••••••••">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-secondary small"><?= lang('App.password') ?></label>
+                    <input type="password" name="password" class="form-control form-control-lg fs-6" value="<?= esc($remembered_password ?? '') ?>" required placeholder="••••••••">
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check mb-0">
+                        <input type="checkbox" name="remember_me" id="remember_me" class="form-check-input" value="1" <?= !empty($remembered_email) ? 'checked' : '' ?>>
+                        <label for="remember_me" class="form-check-label text-secondary small fw-semibold">Remember me</label>
+                    </div>
+                    <a href="/forgot-password" class="text-primary text-decoration-none small fw-semibold"><?= lang('App.forgot_password') ?></a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm mb-3"><?= lang('App.login') ?></button>

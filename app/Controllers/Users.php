@@ -21,9 +21,11 @@ class Users extends BaseController
         if (!session()->get('is_admin')) return redirect()->to('/tasks')->with('error', 'Acceso denegado.');
 
         $model = new UserModel();
+        $order = $this->request->getGet('order') ?? 'newer';
+        $sortDirection = ($order === 'older') ? 'ASC' : 'DESC';
 
-        $data['users'] = $model->orderBy('id', 'ASC')->paginate(10);
-        $data['pager'] = $model->pager;
+        $data['users'] = $model->orderBy('id', $sortDirection)->findAll();
+        $data['order'] = $order;
 
         return view('users/index', $data);
     }

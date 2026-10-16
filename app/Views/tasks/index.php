@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= lang('App.tasks') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -47,7 +48,7 @@
         </div>
     </nav>
 
-    <div class="container" style="max-width: 850px;">
+    <div class="container my-4" style="max-width: 850px;">
         <?php if(session()->getFlashdata('success')): ?>
             <div class="alert alert-success py-2 auto-dismiss-alert"><?= session()->getFlashdata('success') ?></div>
         <?php endif; ?>
@@ -55,15 +56,16 @@
             <div class="alert alert-danger py-2 auto-dismiss-alert"><?= session()->getFlashdata('error') ?></div>
         <?php endif; ?>
 
-        <div class="card p-4 shadow-sm border-0 rounded-4">
+        <div class="card p-4 p-md-5 shadow-sm border-0 rounded-4">
             <h2 class="fw-bold text-dark mb-3"><?= lang('App.tasks') ?></h2>
 
-            <div class="mb-3">
-                <a href="/tasks/create" class="btn btn-primary fw-bold shadow-sm">+ <?= lang('App.new_task') ?></a>
+            <div class="mb-4">
+                <a href="/tasks/create" class="btn btn-primary fw-bold px-4 shadow-sm">+ <?= lang('App.new_task') ?></a>
             </div>
 
             <form action="/tasks" method="get" class="mb-4" style="max-width: 320px;">
-                <label class="form-label fw-bold text-secondary mb-1"><?= lang('App.search') ?></label>
+                <input type="hidden" name="order" value="<?= esc($order ?? 'newer') ?>">
+                <label class="form-label fw-bold text-secondary small mb-1"><?= lang('App.search') ?></label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0">🔍</span>
                     <input type="text" name="search" class="form-control border-start-0" placeholder="<?= lang('App.search') ?>" value="<?= esc($search ?? '') ?>">
@@ -72,15 +74,15 @@
 
             <div class="list-group list-group-flush border-top border-bottom mb-4">
                 <?php if(empty($tasks)): ?>
-                    <div class="text-muted py-3"><?= lang('App.no_tasks') ?></div>
+                    <div class="text-muted py-4 text-center"><?= lang('App.no_tasks') ?></div>
                 <?php else: ?>
                     <?php foreach($tasks as $t): ?>
                         <div class="list-group-item d-flex justify-content-between align-items-center py-3 bg-transparent">
-                            <a href="/tasks/edit/<?= $t['id'] ?>" class="fw-bold fs-5 text-primary text-decoration-none">
+                            <a href="/tasks/edit/<?= $t['id'] ?>" class="fw-semibold fs-5 text-primary text-decoration-none">
                                 <?= esc($t['class_name']) ?>
                             </a>
                             <div>
-                                <a href="/tasks/delete/<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta tarea?');"><?= lang('App.delete') ?></a>
+                                <a href="/tasks/delete/<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger px-3" onclick="return confirm('<?= lang('App.are_you_sure') ?>');"><?= lang('App.delete') ?></a>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -88,22 +90,12 @@
             </div>
 
             <div class="d-flex justify-content-start gap-2 pt-2">
-                <?php 
-                    $prevUrl = (isset($pager) && method_exists($pager, 'getPrevious')) ? $pager->getPrevious() : null;
-                    $nextUrl = (isset($pager) && method_exists($pager, 'getNext')) ? $pager->getNext() : null;
-                ?>
-
-                <?php if ($prevUrl): ?>
-                    <a href="<?= $prevUrl ?>" class="btn btn-outline-primary btn-sm px-3 fw-bold"><?= lang('App.newer') ?></a>
-                <?php else: ?>
-                    <button class="btn btn-outline-secondary btn-sm px-3 disabled"><?= lang('App.newer') ?></button>
-                <?php endif; ?>
-
-                <?php if ($nextUrl): ?>
-                    <a href="<?= $nextUrl ?>" class="btn btn-outline-primary btn-sm px-3 fw-bold"><?= lang('App.older') ?></a>
-                <?php else: ?>
-                    <button class="btn btn-outline-secondary btn-sm px-3 disabled"><?= lang('App.older') ?></button>
-                <?php endif; ?>
+                <a href="/tasks?search=<?= urlencode($search ?? '') ?>&order=newer" class="btn <?= ($order ?? 'newer') === 'newer' ? 'btn-primary' : 'btn-outline-primary' ?> btn-sm px-3 fw-bold">
+                    <?= lang('App.newer') ?>
+                </a>
+                <a href="/tasks?search=<?= urlencode($search ?? '') ?>&order=older" class="btn <?= ($order ?? '') === 'older' ? 'btn-primary' : 'btn-outline-primary' ?> btn-sm px-3 fw-bold">
+                    <?= lang('App.older') ?>
+                </a>
             </div>
         </div>
     </div>
